@@ -74,3 +74,13 @@ git diff --check
 - SHA-256：`247afd025355e24de15e1553e2692cf25ac9b0e4f49cc4e1c7f59174d95580bc`。
 
 源码标签为 `desktop-v0.2.6`；待发布历史扫描在提交后执行。市场是否收录仍以 plugin_status 返回为准，不能把本地校验通过或提交成功描述为官方批准。
+
+## 最终发布验证
+
+- GitHub 已发布 [desktop-v0.2.6](https://github.com/new-Beginner/pi-antigravity/releases/tag/desktop-v0.2.6)，安装包远端 digest 与本地 `247afd025355e24de15e1553e2692cf25ac9b0e4f49cc4e1c7f59174d95580bc` 一致。
+- 0.2.6 提交后的完整发布分支历史扫描：`PASS checked=119 findings=0`。源码标签固定到 `33c1105bae4615de1935b827b1299a0f53aac747`；旧本地分支和标签未覆盖，也未强推。
+- 中心 `create_plugin` 返回零 blockers、`approved`；随后 `plugin_status` 返回 `published`，时间 `2026-10-13T08:23:38Z`，渠道 `stable`、信任等级 `community`。公开插件详情与公开 catalog 均已列出 0.2.6。平台状态不等同于人工全面安全审计。
+- 中心重新生成 manifest，因此市场包与本地/GitHub 包的容器哈希不同。实际下载 [官方发行包](https://raw.githubusercontent.com/AIUO-Net/pi-desktop-plugins/main/packages/local.pi-antigravity.desktop-0.2.6.piplug)，尺寸 2,461,981 字节，SHA-256 为 `e48599f1a6669c4d360e828794e8478d75c511f2c4b08c262b63cd9bfc66b2fc`，与公开目录一致。
+- 对实际官方包执行凭据扫描：`PASS checked=9 findings=0`。除 manifest 外的 8 个文件与本地官方工具生成的包逐字节一致；manifest 的 `id`、`version`、`main`、`ui`、`contributes`、`activationEvents`、`engines`、`i18n` 一致，权限和网络域名集合一致。
+
+没有剩余发布阻塞。真实账号在线授权和回复仍未验收；使用前需提供自己有权使用的 OAuth 客户端，不能恢复旧内置客户端来规避此要求。本节只记录发布证据，不更改 0.2.6 安装包、源码标签或市场提交内容。
