@@ -1,0 +1,3 @@
+Based on Rahularya01/pi-antigravity 0.10.0 (MIT), commit d59d22bfebd9e44f2fd4a31bf5954a23fb9b043a.
+Includes undici 8.11.2 (MIT) bundled for provider OAuth.
+Host-provided Pi modules are not bundled.

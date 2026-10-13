@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "local.pi-antigravity.desktop",
+  "name": "Antigravity for Desktop",
+  "version": "0.2.5",
+  "description": "全局 Google OAuth 服务与 Gemini native 直连，包含完整模型选择与设置窗口。",
+  "author": "new-Beginner; based on Rahul Arya's pi-antigravity",
+  "license": "MIT",
+  "homepage": "https://github.com/new-Beginner/pi-antigravity/tree/desktop-release/desktop",
+  "repository": "https://github.com/new-Beginner/pi-antigravity",
+  "categories": [
+    "developer-tools",
+    "community"
+  ],
+  "changelog": "0.2.5: remove bundled OAuth client credentials; require runtime client configuration and add release secret scanning. / 移除内置 OAuth 凭据，改用运行时配置并增加发布扫描。",
+  "safetyNotes": "No OAuth client credentials bundled; your own authorized client configuration is required. Unofficial Google integration. Handles OAuth tokens through the host; sends prompts and tool data to Google Cloud Code Assist. Trusted Agent code runs without an OS sandbox. Model settings write to the installed plugin directory. Use only accounts you are authorized to access.",
+  "i18n": {
+    "en": {
+      "name": "Antigravity for Desktop",
+      "description": "Google OAuth and native Cloud Code Assist chat with a model selection and settings panel; no local proxy required.",
+      "safetyNotes": "No OAuth client credentials bundled; your own authorized client configuration is required. Unofficial Google integration. Handles OAuth tokens through the host; sends prompts and tool data to Google Cloud Code Assist. Trusted Agent code runs without an OS sandbox. Model settings write to the installed plugin directory. Use only accounts you are authorized to access."
+    },
+    "zh-CN": {
+      "name": "Antigravity for Desktop",
+      "description": "Google OAuth 与 Cloud Code Assist 原生聊天，提供模型选择和设置面板，无需本地反代。",
+      "safetyNotes": "不内置 OAuth 客户端凭据，需自行配置有权使用的客户端。非 Google 官方集成。通过宿主处理 OAuth 令牌，提示词和工具数据发送至 Google Cloud Code Assist；受信任 Agent 代码不是 OS 沙箱。模型设置会写入安装后的插件目录。仅使用你有权访问的账户。"
+    }
+  },
+  "main": "main.cjs",
+  "ui": {
+    "title": {
+      "en": "Antigravity model settings",
+      "zh-CN": "Antigravity 模型选择与设置"
+    },
+    "panel": "panel.html",
+    "shape": "panel"
+  },
+  "contributes": {
+    "agentExtensions": [
+      "agent-extension.mjs"
+    ],
+    "providers": [
+      {
+        "id": "antigravity",
+        "name": "Antigravity",
+        "vendorKey": "antigravity",
+        "baseUrl": "https://daily-cloudcode-pa.googleapis.com",
+        "apiStyle": "google_generative_ai",
+        "authKind": "oauth",
+        "oauth": {
+          "loginLabel": "使用 Google 登录 Antigravity",
+          "isSubscription": true
+        },
+        "models": [
+          {
+            "id": "gemini-3.8-flash",
+            "name": "Gemini 3.8 Flash (Antigravity)",
+            "contextWindow": 1048576,
+            "maxTokens": 65536,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "defaultThinkingLevel": "low"
+          },
+          {
+            "id": "gemini-3.7-flash",
+            "name": "Gemini 3.7 Flash (Antigravity)",
+            "contextWindow": 1048576,
+            "maxTokens": 65536,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "defaultThinkingLevel": "low"
+          },
+          {
+            "id": "gemini-3.6-flash",
+            "name": "Gemini 3.6 Flash (Antigravity)",
+            "contextWindow": 1048576,
+            "maxTokens": 65536,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "defaultThinkingLevel": "low"
+          },
+          {
+            "id": "claude-opus-4-6",
+            "name": "Claude Opus 4.6 (Antigravity)",
+            "contextWindow": 250000,
+            "maxTokens": 64000,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "high"
+            ],
+            "defaultThinkingLevel": "high"
+          },
+          {
+            "id": "claude-sonnet-4-6",
+            "name": "Claude Sonnet 4.6 (Antigravity)",
+            "contextWindow": 200000,
+            "maxTokens": 64000,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "high"
+            ],
+            "defaultThinkingLevel": "high"
+          },
+          {
+            "id": "gemini-3.1-pro",
+            "name": "Gemini 3.1 Pro (Antigravity)",
+            "contextWindow": 1048576,
+            "maxTokens": 65535,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "low",
+              "high"
+            ],
+            "defaultThinkingLevel": "low"
+          },
+          {
+            "id": "gemini-3.5-flash",
+            "name": "Gemini 3.5 Flash (Antigravity)",
+            "contextWindow": 1048576,
+            "maxTokens": 65536,
+            "supportsImages": true,
+            "thinkingLevels": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "defaultThinkingLevel": "low"
+          },
+          {
+            "id": "gpt-oss-120b",
+            "name": "GPT-OSS 120B (Antigravity)",
+            "contextWindow": 131072,
+            "maxTokens": 32768,
+            "supportsImages": false,
+            "thinkingLevels": [
+              "medium"
+            ],
+            "defaultThinkingLevel": "medium"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": [
+    "provider.register",
+    "provider.oauth",
+    "agent.extension",
+    "net.fetch",
+    "ui.panel"
+  ],
+  "net": {
+    "domains": [
+      "oauth2.googleapis.com",
+      "www.googleapis.com",
+      "daily-cloudcode-pa.googleapis.com",
+      "daily-cloudcode-pa.sandbox.googleapis.com",
+      "cloudcode-pa.googleapis.com"
+    ]
+  },
+  "engines": {
+    "piDesktop": ">=0.17.0"
+  },
+  "activationEvents": [
+    "onStartup"
+  ]
+}
