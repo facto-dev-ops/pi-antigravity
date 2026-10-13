@@ -1,10 +1,10 @@
 # pi-antigravity
 
-> **PI-Desktop fork:** Download the versioned `.piplug` from [GitHub Releases](https://github.com/new-Beginner/pi-antigravity/releases). Follow [Desktop installation and safety notes](desktop/README.md); do not install the CLI package below into PI-Desktop. The Desktop plugin version is **0.2.6**; upstream CLI metadata remains **0.10.0**. No OAuth client credentials are bundled: configure your own authorized client at runtime before login or refresh.
+> **PI-Desktop fork:** Download the versioned `.piplug` from [GitHub Releases](https://github.com/new-Beginner/pi-antigravity/releases). Follow [Desktop installation and safety notes](desktop/README.md); do not install the CLI package below into PI-Desktop. Desktop **0.2.7** restores the original application OAuth client for zero-configuration login. Personal access/refresh tokens and account state must never be included in source or packages. Upstream CLI metadata remains **0.10.0**.
 >
-> **PI-Desktop 分支：** 从 [GitHub Releases](https://github.com/new-Beginner/pi-antigravity/releases) 下载 `.piplug`，按 [Desktop 使用与安全说明](desktop/README.md) 安装。Desktop 插件版本为 **0.2.6**，上游 CLI 的 **0.10.0** 元数据独立保留。不内置 OAuth 客户端凭据，登录和刷新前需配置有权使用的客户端。
+> **PI-Desktop 分支：** 从 [GitHub Releases](https://github.com/new-Beginner/pi-antigravity/releases) 下载 `.piplug`，按 [Desktop 使用说明](desktop/README.md) 安装。Desktop **0.2.7** 恢复原应用 OAuth 客户端及免配置登录；个人 access/refresh token 和账号状态不得进入源码或安装包。上游 CLI 元数据独立保留为 **0.10.0**。
 
-> **OAuth configuration (CLI and Desktop):** Set `ANTIGRAVITY_CLIENT_ID` and `ANTIGRAVITY_CLIENT_SECRET` in the environment of the process running the plugin (`NOAGY_` aliases remain supported). Missing or blank values stop login and refresh before any listener or network request. Keep real values out of source, bundles, model settings, and release files. Your client must be authorized for the requested Google scopes; this release does not grant access or guarantee compatibility with tokens issued to the removed upstream client.
+> **OAuth client vs account data:** The bundled upstream application client is not your saved Google session. Runtime `ANTIGRAVITY_CLIENT_ID` and `ANTIGRAVITY_CLIENT_SECRET` (`NOAGY_` aliases supported) are optional paired overrides. User tokens are returned to the Desktop host store, never built into the plugin. The application client still triggers secret-scanner findings; restoring it does not establish distribution authorization or guarantee real Google access.
 
 [![npm version](https://img.shields.io/npm/v/pi-antigravity?logo=npm)](https://www.npmjs.com/package/pi-antigravity)
 [![npm downloads](https://img.shields.io/npm/dm/pi-antigravity?logo=npm)](https://www.npmjs.com/package/pi-antigravity)

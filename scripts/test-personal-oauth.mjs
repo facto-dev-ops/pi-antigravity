@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { personalFindings } from './check-personal-oauth.mjs';
+import { scanText } from './check-release-secrets.mjs';
+const text = value => Buffer.from(value);
+const fakeAccess = ['ya29', '.', 'A'.repeat(30)].join('');
+const fakeRefresh = ['1', '/', 'B'.repeat(30)].join('');
+const fakeJwt = ['eyJ'+'C'.repeat(20), 'D'.repeat(20), 'E'.repeat(20)].join('.');
+assert.ok(personalFindings('main.js', text(fakeAccess)).includes('google-user-access-token'));
+assert.ok(personalFindings('main.js', text(fakeRefresh)).includes('google-user-refresh-token'));
+assert.ok(personalFindings('main.js', text(fakeJwt)).includes('jwt-token'));
+for (const name of ['auth.json','accounts.json','settings.json','antigravity-models.json','credentials.json','oauth.json','.env','.env.local']) assert.ok(personalFindings('nested/'+name, text('{}')).includes('private-account-file'));
+const applicationClient = ['GOCSPX', '-', 'F'.repeat(30)].join('');
+assert.deepEqual(personalFindings('main.js', text(applicationClient)), []);
+assert.ok(scanText(applicationClient).includes('google-oauth-secret'), 'Full scanner must still flag the application secret');
+assert.deepEqual(personalFindings('main.js', text('fake-old-access fake-refresh')), []);
+console.log('Personal OAuth token shapes/private filenames and separate full-secret findings tests passed');

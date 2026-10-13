@@ -21,13 +21,20 @@ export const SCOPES = [
   "https://www.googleapis.com/auth/experimentsandconfigs",
 ];
 
-/** Resolve at operation time; OAuth client credentials are never bundled defaults. */
+/** Upstream application configuration, not a user's saved OAuth session. */
+const DEFAULT_OAUTH_CLIENT = {
+  clientId: "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com",
+  clientSecret: "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",
+};
+
+/** Preserve zero-configuration login; resolve optional overrides per operation. */
 export function resolveOAuthClient(): { clientId: string; clientSecret: string } {
   const clientId = antigravityEnv("CLIENT_ID")?.trim();
   const clientSecret = antigravityEnv("CLIENT_SECRET")?.trim();
+  if (!clientId && !clientSecret) return { ...DEFAULT_OAUTH_CLIENT };
   if (!clientId || !clientSecret) {
     throw new Error(
-      "OAuth client is not configured. Set ANTIGRAVITY_CLIENT_ID and ANTIGRAVITY_CLIENT_SECRET in the environment of the process running the plugin, then restart PI-Desktop (or the CLI). No OAuth client credentials are bundled. / 未配置 OAuth 客户端，请在运行插件的进程环境中设置上述变量并重启。",
+      "Both ANTIGRAVITY_CLIENT_ID and ANTIGRAVITY_CLIENT_SECRET are required for a custom OAuth client. / 自定义 OAuth 客户端必须同时配置 ID 和密钥。",
     );
   }
   return { clientId, clientSecret };

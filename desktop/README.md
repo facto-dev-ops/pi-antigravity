@@ -1,27 +1,27 @@
-# Antigravity for PI-Desktop · 0.2.6
+# Antigravity for PI-Desktop · 0.2.7
 
-> **0.2.5 安全变更：不再内置任何 OAuth 客户端 ID 或密钥。** 登录和刷新必须配置你有权使用的客户端。客户端必须具备 Google 所需 scope 的授权；自行创建客户端不保证获得 Cloud Code Assist 权限。旧账号令牌属于原客户端，不能保证换客户端后可刷新，必要时重新登录。
+> **0.2.7 恢复原登录配置：** 用户要求排除的是个人登录保存的 access/refresh token 和账号状态，不是应用客户端配置。0.2.5–0.2.6 误将两者混同并要求自配客户端；本版恢复 0.2.4 的同一组默认客户端，正常使用不必额外设置客户端变量。不会恢复、上传或删除你的本机个人令牌。
 >
-> **Breaking change:** No OAuth client ID or secret is bundled. Supply your own authorized client at runtime before login/refresh. Existing tokens issued to the removed upstream client may require reauthorization.
+> **Restoration:** Original application OAuth client restored for zero-configuration login. Personal account tokens/state are never release inputs. The application client still triggers secret scanning; provenance alone does not prove third-party distribution authorization. Mocked tests do not guarantee live Google login or model access.
 
 在 **设置 → 模型 → 添加 AI 服务** 中登录 Google Antigravity，使用普通模型菜单选择 Gemini、Claude 等模型。聊天请求使用 Gemini native 协议，在 Agent 进程内适配 Cloud Code Assist，**不需要 CLIProxyAPI 或本地 HTTP 反代，不修改 Desktop 安装文件**。
 
 > 非 Google 官方集成，仅使用你有权访问的账户。需要权限 `provider.register`、`provider.oauth`、`agent.extension`、`net.fetch`、`ui.panel`，安装时须明确授权。OAuth 插件回调能够接收令牌，受信任扩展运行于 Agent 进程，不是 OS 沙箱。先检查源码再授权。
 >
-> 本机验证版本：PI-Desktop **0.18.0**。0.2.6 通过 Desktop 原生插件面板（`ui.panel`）提供模型勾选、拖拽排序、高级设置（思考等级／上下文／输出长度）及自定义模型 ID。使用扩展页的「打开面板」入口；CLI 适配器中的 `/antigravity.settings` 只提供入口提示，并非本安装包的打开命令。
+> 本机验证版本：PI-Desktop **0.18.0**。0.2.7 通过 Desktop 原生插件面板（`ui.panel`）提供模型勾选、拖拽排序、高级设置（思考等级／上下文／输出长度）及自定义模型 ID。使用扩展页的「打开面板」入口。
 >
 > **Model settings:** The plugin supplies its own model-management panel, not the host's built-in account editor. Use **Plugins → Antigravity → Open panel**. OAuth and model availability still require your authorized Google account.
 ## 安装和使用
 
-0. 在启动 PI-Desktop **之前**，将 `ANTIGRAVITY_CLIENT_ID`、`ANTIGRAVITY_CLIENT_SECRET` 设置到运行插件的进程环境中（兼容 `NOAGY_CLIENT_ID`、`NOAGY_CLIENT_SECRET`）。完全退出已有 Desktop 进程，再从带配置的环境启动。仅在另一个终端设置变量，不代表已运行的 Electron 或插件进程能够读取；快捷方式启动也不能假设继承该终端环境。不要在模型设置面板、聊天、仓库、manifest 或安装包中填写凭据。缺配置时明确报错，且不打开回调端口、不发起网络请求。
-1. 在 **插件 → 菜单 → 安装插件包** 中选择 `dist/local.pi-antigravity.desktop-0.2.6.piplug`。
+0. 不需要配置 OAuth 客户端环境变量。如你已设置自定义 `ANTIGRAVITY_CLIENT_ID` / `ANTIGRAVITY_CLIENT_SECRET`（兼容 `NOAGY_`），它们必须成对提供且对应同一个客户端；只想使用默认登录时不要保留单项覆盖。自定义配置仅由运行插件的进程环境读取，完全退出并重新启动 Desktop 才生效。不要在聊天、模型设置、源码或安装包中填个人令牌。
+1. 在 **插件 → 菜单 → 安装插件包** 中选择 `dist/local.pi-antigravity.desktop-0.2.7.piplug`。
 2. 确认五项权限：添加模型服务、运行供应商 OAuth、在 Agent 内运行代码、受 Google 域名白名单约束的网络请求、模型设置面板。启用插件；不要将插件仅限定到不包含目标会话的项目。
 3. 打开 **设置 → 模型 → 添加 AI 服务**，搜索 **Antigravity**，点击“使用 Google 登录 Antigravity”。登录操作不需要提前创建或运行聊天会话。
 4. 在系统浏览器中由你本人完成 Google 授权。宿主负责展示登录状态、打开授权地址和保存凭据。
 5. 本机登录通过 `localhost:51121/oauth-callback` 自动完成。远程浏览器无法访问该回调时，在登录对话框粘贴完整回调 URL；不要发到聊天消息中。取消登录会中止流程。
 6. 授权完成后，在扩展页面点击 Antigravity 卡片的 **打开面板**，按需选择、排序和设置模型。面板保存后如宿主未立即刷新，重新加载插件并打开新会话。
 
-完成上述 OAuth 客户端配置后，无需添加自定义端点、填写模型 API Key、启动额外服务或运行 `/antigravity.login`、`/antigravity.model`。登录时仅启动临时 OAuth 回调监听器，它不转发聊天请求，不是反代。
+无需添加自定义端点、填写模型 API Key、启动额外服务或运行 `/antigravity.login`、`/antigravity.model`。登录时仅启动临时 OAuth 回调监听器，不转发聊天请求。
 
 也可以从插件页“加载开发文件夹”，选择当前 `desktop` 文件夹。**不要用“导入 pi 扩展”选择仓库根目录**，根目录仍声明上游 CLI 入口。
 
@@ -92,13 +92,13 @@
 
 ### 发布 / Publishing
 
-源码：[new-Beginner/pi-antigravity](https://github.com/new-Beginner/pi-antigravity)，Desktop 干净发布分支为 `desktop-release`，版本标签为 `desktop-v0.2.6`。该分支从清理后的快照开始，避免推送含旧默认凭据的祖先；旧本地历史保留，不绕过 GitHub 密钥保护。安装包名为 `local.pi-antigravity.desktop-0.2.6.piplug`。上游 CLI 的 `package.json` 版本独立保留为 0.10.0，不发布到上游 npm 包。
+源码：[new-Beginner/pi-antigravity](https://github.com/new-Beginner/pi-antigravity)，Desktop 发布分支为 `desktop-release`，本次目标标签为 `desktop-v0.2.7`，安装包为 `local.pi-antigravity.desktop-0.2.7.piplug`。0.2.7 恢复客户端配置后，完整密钥扫描会报告该应用配置；不能再称为无密钥发布分支。是否上传成功以发布结果为准，不绕过 GitHub 推送保护。CLI 版本独立保留为 0.10.0。
 
 官方当前通过 [插件中心](https://plugins.aiuo.net) 接收源码仓库绑定和版本审核；官方发行仓库由中心生成，不手工修改 `catalog.json` 或提交插件源码 PR。GitHub Release 不代表插件已经被官方市场收录。后续版本必须同步更新构建清单版本、文档、标签和安装包名。
 
 ## 排障
 
-- **提示 OAuth client is not configured**：在运行插件的进程环境中设置上述两个变量，完全退出并重新启动 Desktop。不要提交或发送真实值。
+- **提示 Both ANTIGRAVITY_CLIENT_ID and ANTIGRAVITY_CLIENT_SECRET**：只设置了一项自定义客户端变量；补齐同一客户端的另一项，或移除覆盖并重启，以使用原默认客户端。
 - **添加服务列表没有 Antigravity**：检查是否安装 0.2.0、插件已启用、`provider.register` 和 `provider.oauth` 已确认。旧版或权限不完整的插件不会提供该入口。
 - **仍出现 runtime not found for session**：这是旧斜杠命令路径。停用旧插件，使用设置页的 Antigravity 登录入口。
 - **登录成功但首条请求失败**：确认 `agent.extension` 权限和项目激活范围，打开新会话再试；该权限缺失时全局服务可能存在，但 native 传输不会运行。
@@ -126,8 +126,10 @@ npm run desktop:build
 PI_DESKTOP_RUNTIME_DIR='D:/Mypi_deskktop/PI-Desktop/resources/agent-runtime' npm run desktop:smoke
 npm run secrets:check
 # 打包后再检查实际安装包；提交后检查将要推送的全部可达历史
-npm run secrets:check -- --package desktop/dist/local.pi-antigravity.desktop-0.2.6.piplug
+npm run privacy:check -- --package desktop/dist/local.pi-antigravity.desktop-0.2.7.piplug
 npm run secrets:check -- --history desktop-release
+# 完整密钥扫描仍会报告恢复的应用客户端，不能将其结果称为通过
+npm run secrets:check -- --package desktop/dist/local.pi-antigravity.desktop-0.2.7.piplug
 ```
 
 测试需要 `PI_SCRATCH_DIR`，临时假凭据全部放在该目录。`desktop:test` 包含 19 项保留回归、24 项 native 测试和 10 项宿主 OAuth 传输测试。OAuth 测试禁用外网访问，真实登录逻辑仅使用临时本地回调监听和假回调／令牌。旧适配源码不会作为安装包入口。
@@ -147,3 +149,4 @@ npm run secrets:check -- --history desktop-release
 
 - 0.2.5：移除上游 OAuth 默认客户端；新增运行时缺配置、请求参数、错误回显脱敏及独立发布凭据扫描。扫描规则覆盖常见凭据及常量 Base64 编码，不替代全面安全审计。OAuth 和运行器测试仍使用假凭据和模拟响应，不代表真实 Google 账号在线验收。
 - 0.2.6：插件中心要求主入口必须为 `main.js`；改用该文件名并添加包级 CommonJS 声明，包元数据版本随 manifest 更新。不改动 OAuth 配置和凭据边界。 / Marketplace-compatible `main.js` with explicit CommonJS package metadata; no bundled OAuth client credentials.
+- 0.2.7：纠正用户需求理解错误，恢复同源默认客户端，增加无环境配置的模拟登录／刷新及个人账号数据定向检查；保留完整客户端密钥告警，不隐藏或绕过。 / Restore the original default application client; keep personal account data out of releases and preserve full-scanner findings.

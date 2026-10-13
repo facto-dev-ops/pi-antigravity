@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { existsSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
@@ -10,7 +11,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const home = mkdtempSync(join(process.env.PI_SCRATCH_DIR, "antigravity-native-runtime-"));
 process.env.PI_CODING_AGENT_DIR = join(home, "cli-must-not-be-read");
 const manifest = JSON.parse(createRequire(import.meta.url)("node:fs").readFileSync(join(root, "desktop/manifest.json"), "utf8"));
-assert.equal(manifest.version, "0.2.6");
+assert.equal(manifest.version, "0.2.7");
 assert.equal(manifest.main, "main.js");
 const packageMetadata = JSON.parse(createRequire(import.meta.url)("node:fs").readFileSync(join(root, "desktop/package.json"), "utf8"));
 assert.equal(packageMetadata.version, manifest.version);
@@ -26,8 +27,6 @@ assert.equal(typeof pluginMain.onPanelInvoke, "function");
 assert.equal(typeof pluginMain.onLoad, "function");
 await pluginMain.onLoad(); await pluginMain.onUnload();
 const originalPi = globalThis.pi;
-process.env.ANTIGRAVITY_CLIENT_ID = "fake-runtime-client";
-process.env.ANTIGRAVITY_CLIENT_SECRET = "fake-runtime-secret";
 let hostOAuthCalls = 0;
 globalThis.pi = {
   providers: { oauth: { async notify() {}, async prompt() { throw new Error("Refresh must not prompt"); } } },
@@ -35,19 +34,16 @@ globalThis.pi = {
     hostOAuthCalls++;
     assert.equal(input.url, "https://oauth2.googleapis.com/token");
     assert.equal(new URLSearchParams(input.body).get("refresh_token"), "fake-refresh");
-    assert.equal(new URLSearchParams(input.body).get("client_id"), "fake-runtime-client");
-    assert.equal(new URLSearchParams(input.body).get("client_secret"), "fake-runtime-secret");
+    const params = new URLSearchParams(input.body);
+    const digest = value => createHash("sha256").update(value).digest("hex");
+    assert.ok(digest(params.get("client_id")) === "bf00c418024ba6bf606ccdc37120976e41bc429dd1d46ecf16a729aa532626ea", "Bundled default client mismatch");
+    assert.ok(digest(params.get("client_secret")) === "1d2f041093fd95aa8995a038c711d50a7960da09a505381c09a745d6ad0ecc60", "Bundled default secret mismatch");
     return { status: 200, bodyText: JSON.stringify({ access_token: "fake-host-oauth", refresh_token: "fake-rotated-refresh", expires_in: 3600 }) };
   } },
 };
 try {
   await assert.rejects(pluginMain.onProviderOAuth({ operation: "login", providerId: "other" }, { signal: new AbortController().signal }), /Unknown OAuth provider/);
   for (const name of ["ANTIGRAVITY_CLIENT_ID", "ANTIGRAVITY_CLIENT_SECRET", "NOAGY_CLIENT_ID", "NOAGY_CLIENT_SECRET"]) delete process.env[name];
-  await assert.rejects(pluginMain.onProviderOAuth({ operation: "login", providerId: "antigravity", loginId: "fake-missing-config" }, { signal: new AbortController().signal }), /OAuth client is not configured/);
-  await assert.rejects(pluginMain.onProviderOAuth({ operation: "refresh", providerId: "antigravity", credential: { accessToken: "fake-old", refreshToken: "fake-refresh" } }, { signal: new AbortController().signal }), /OAuth client is not configured/);
-  assert.equal(hostOAuthCalls, 0);
-  process.env.ANTIGRAVITY_CLIENT_ID = "fake-runtime-client";
-  process.env.ANTIGRAVITY_CLIENT_SECRET = "fake-runtime-secret";
   const credential = await pluginMain.onProviderOAuth({ operation: "refresh", providerId: "antigravity", credential: { accessToken: "fake-old", refreshToken: "fake-refresh", expiresAt: 0, headers: { "x-pi-antigravity-project": "fake-project" } } }, { signal: new AbortController().signal });
   assert.equal(credential.accessToken, "fake-host-oauth");
   assert.equal(hostOAuthCalls, 1);

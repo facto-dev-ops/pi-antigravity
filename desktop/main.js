@@ -28431,12 +28431,17 @@ var SCOPES = [
   "https://www.googleapis.com/auth/cclog",
   "https://www.googleapis.com/auth/experimentsandconfigs"
 ];
+var DEFAULT_OAUTH_CLIENT = {
+  clientId: "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com",
+  clientSecret: "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"
+};
 function resolveOAuthClient() {
   const clientId = antigravityEnv("CLIENT_ID")?.trim();
   const clientSecret = antigravityEnv("CLIENT_SECRET")?.trim();
+  if (!clientId && !clientSecret) return { ...DEFAULT_OAUTH_CLIENT };
   if (!clientId || !clientSecret) {
     throw new Error(
-      "OAuth client is not configured. Set ANTIGRAVITY_CLIENT_ID and ANTIGRAVITY_CLIENT_SECRET in the environment of the process running the plugin, then restart PI-Desktop (or the CLI). No OAuth client credentials are bundled. / \u672A\u914D\u7F6E OAuth \u5BA2\u6237\u7AEF\uFF0C\u8BF7\u5728\u8FD0\u884C\u63D2\u4EF6\u7684\u8FDB\u7A0B\u73AF\u5883\u4E2D\u8BBE\u7F6E\u4E0A\u8FF0\u53D8\u91CF\u5E76\u91CD\u542F\u3002"
+      "Both ANTIGRAVITY_CLIENT_ID and ANTIGRAVITY_CLIENT_SECRET are required for a custom OAuth client. / \u81EA\u5B9A\u4E49 OAuth \u5BA2\u6237\u7AEF\u5FC5\u987B\u540C\u65F6\u914D\u7F6E ID \u548C\u5BC6\u94A5\u3002"
     );
   }
   return { clientId, clientSecret };

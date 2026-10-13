@@ -76,25 +76,25 @@ const manifest = {
   schemaVersion: 1,
   id: "local.pi-antigravity.desktop",
   name: "Antigravity for Desktop",
-  version: "0.2.6",
+  version: "0.2.7",
   description: "全局 Google OAuth 服务与 Gemini native 直连，包含完整模型选择与设置窗口。",
   author: "new-Beginner; based on Rahul Arya's pi-antigravity",
   license: "MIT",
   homepage: "https://github.com/new-Beginner/pi-antigravity/tree/desktop-release/desktop",
   repository: "https://github.com/new-Beginner/pi-antigravity",
   categories: ["developer-tools", "community"],
-  changelog: "0.2.6: align marketplace entry with main.js and explicit CommonJS metadata; retain runtime-only OAuth credentials. / 适配插件中心 main.js 入口要求，继续使用运行时 OAuth 配置。",
-  safetyNotes: "No OAuth client credentials bundled; your own authorized client configuration is required. Unofficial Google integration. Handles OAuth tokens through the host; sends prompts and tool data to Google Cloud Code Assist. Trusted Agent code runs without an OS sandbox. Model settings write to the installed plugin directory. Use only accounts you are authorized to access.",
+  changelog: "0.2.7: restore upstream OAuth client configuration for zero-configuration login; keep personal account tokens and state out of releases. / 恢复原 OAuth 客户端配置，个人登录令牌与状态不进入发布包。",
+  safetyNotes: "Includes upstream OAuth application client configuration, not user login tokens. This client configuration may trigger repository secret scanning and is not a user-account credential. Unofficial Google integration. Host stores user tokens; prompts and tool data go to Google Cloud Code Assist. Trusted Agent code has no OS sandbox. Model settings write to the plugin directory. Use only authorized accounts.",
   i18n: {
     en: {
       name: "Antigravity for Desktop",
       description: "Google OAuth and native Cloud Code Assist chat with a model selection and settings panel; no local proxy required.",
-      safetyNotes: "No OAuth client credentials bundled; your own authorized client configuration is required. Unofficial Google integration. Handles OAuth tokens through the host; sends prompts and tool data to Google Cloud Code Assist. Trusted Agent code runs without an OS sandbox. Model settings write to the installed plugin directory. Use only accounts you are authorized to access.",
+      safetyNotes: "Includes upstream OAuth application client configuration, not user login tokens. This client configuration may trigger repository secret scanning and is not a user-account credential. Unofficial Google integration. Host stores user tokens; prompts and tool data go to Google Cloud Code Assist. Trusted Agent code has no OS sandbox. Model settings write to the plugin directory. Use only authorized accounts.",
     },
     "zh-CN": {
       name: "Antigravity for Desktop",
       description: "Google OAuth 与 Cloud Code Assist 原生聊天，提供模型选择和设置面板，无需本地反代。",
-      safetyNotes: "不内置 OAuth 客户端凭据，需自行配置有权使用的客户端。非 Google 官方集成。通过宿主处理 OAuth 令牌，提示词和工具数据发送至 Google Cloud Code Assist；受信任 Agent 代码不是 OS 沙箱。模型设置会写入安装后的插件目录。仅使用你有权访问的账户。",
+      safetyNotes: "包含上游 OAuth 应用客户端配置，不包含用户登录令牌；客户端配置仍可能触发仓库密钥扫描，并非个人账号凭据。非 Google 官方集成。宿主保存用户令牌，提示词和工具数据发送至 Google Cloud Code Assist；受信任 Agent 代码无 OS 沙箱。模型设置写入插件目录。仅使用有权访问的账户。",
     },
   },
   main: "main.js",
@@ -151,4 +151,4 @@ await writeFile(
   "Based on Rahularya01/pi-antigravity 0.10.0 (MIT), commit d59d22bfebd9e44f2fd4a31bf5954a23fb9b043a.\nIncludes undici 8.11.2 (MIT) bundled for provider OAuth.\nHost-provided Pi modules are not bundled.\n",
 );
 
-console.log("Built Desktop 0.2.6: marketplace main.js entry + runtime-only OAuth client configuration.");
+console.log("Built Desktop 0.2.7: restored default OAuth application client; personal tokens remain host-managed.");
