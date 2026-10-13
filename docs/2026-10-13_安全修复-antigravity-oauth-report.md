@@ -60,3 +60,17 @@ git diff --check
 扫描是定向启发式检查，覆盖常见 Google OAuth、GitHub token、PEM 私钥与常量 Base64；不解析任意混淆、UTF-16、嵌套归档或远端内容。浅克隆中触及缺失祖先的 ref 不能被判定完整通过；不触及浅边界的独立根提交可完整验证。本机未运行 Semgrep 或 CodeQL；没有验证真实账号在线登录和模型回复。
 
 截至本报告生成时，插件中心已返回新 Fork 作为可绑定仓库；GitHub 上传和中心提交将在本地检查后执行，实际结果以 GitHub Release 和 `plugin_status` 为准。本报告不表示插件已获官方审核。干净发布分支不代表删除 Fork 继承的其他上游分支历史，也不代表旧本地包适合发布。
+
+## 0.2.6 插件中心兼容修复
+
+0.2.5 已成功发布到 GitHub，安装包远端 digest 与上述 SHA-256 一致。但插件中心 create_plugin 返回 `manifest.json: main must be exactly main.js`，随后 list_plugins 确认没有创建 Antigravity 记录。该约束比本机 PluginCheck 更严格，并非 OAuth 修复失败。
+
+因此另发 0.2.6，不覆盖 0.2.5：将 CommonJS 入口从 `main.cjs` 改名为 `main.js`，由构建脚本生成 `desktop/package.json` 的 `type: commonjs`，其版本与 manifest 一致。原生扩展仍为 `.mjs`；运行器测试改为按 manifest 加载主入口，并校验包元数据及缺配置/刷新行为。没有恢复任何 OAuth 默认凭据。
+
+- 重新执行全部基础回归、Desktop 测试、类型检查、Lint、行为安全检查和真实运行器模拟回归：通过，零 Google 在线请求。
+- 官方 PluginCheck / PluginPack：通过，9 个文件，2,462,048 字节；双语门禁仍为 0 fail、8 review。
+- 源码扫描：`PASS checked=114 findings=0`；实际包扫描：`PASS checked=9 findings=0`。
+- 包：`desktop/dist/local.pi-antigravity.desktop-0.2.6.piplug`。
+- SHA-256：`247afd025355e24de15e1553e2692cf25ac9b0e4f49cc4e1c7f59174d95580bc`。
+
+源码标签为 `desktop-v0.2.6`；待发布历史扫描在提交后执行。市场是否收录仍以 plugin_status 返回为准，不能把本地校验通过或提交成功描述为官方批准。

@@ -22,7 +22,7 @@ const shared = {
 await build({
   ...shared,
   entryPoints: ["src/desktop/plugin-main.ts"],
-  outfile: "desktop/main.cjs",
+  outfile: "desktop/main.js",
   format: "cjs",
 });
 
@@ -76,14 +76,14 @@ const manifest = {
   schemaVersion: 1,
   id: "local.pi-antigravity.desktop",
   name: "Antigravity for Desktop",
-  version: "0.2.5",
+  version: "0.2.6",
   description: "全局 Google OAuth 服务与 Gemini native 直连，包含完整模型选择与设置窗口。",
   author: "new-Beginner; based on Rahul Arya's pi-antigravity",
   license: "MIT",
   homepage: "https://github.com/new-Beginner/pi-antigravity/tree/desktop-release/desktop",
   repository: "https://github.com/new-Beginner/pi-antigravity",
   categories: ["developer-tools", "community"],
-  changelog: "0.2.5: remove bundled OAuth client credentials; require runtime client configuration and add release secret scanning. / 移除内置 OAuth 凭据，改用运行时配置并增加发布扫描。",
+  changelog: "0.2.6: align marketplace entry with main.js and explicit CommonJS metadata; retain runtime-only OAuth credentials. / 适配插件中心 main.js 入口要求，继续使用运行时 OAuth 配置。",
   safetyNotes: "No OAuth client credentials bundled; your own authorized client configuration is required. Unofficial Google integration. Handles OAuth tokens through the host; sends prompts and tool data to Google Cloud Code Assist. Trusted Agent code runs without an OS sandbox. Model settings write to the installed plugin directory. Use only accounts you are authorized to access.",
   i18n: {
     en: {
@@ -97,7 +97,7 @@ const manifest = {
       safetyNotes: "不内置 OAuth 客户端凭据，需自行配置有权使用的客户端。非 Google 官方集成。通过宿主处理 OAuth 令牌，提示词和工具数据发送至 Google Cloud Code Assist；受信任 Agent 代码不是 OS 沙箱。模型设置会写入安装后的插件目录。仅使用你有权访问的账户。",
     },
   },
-  main: "main.cjs",
+  main: "main.js",
   ui: {
     title: { en: "Antigravity model settings", "zh-CN": "Antigravity 模型选择与设置" },
     panel: "panel.html",
@@ -138,6 +138,12 @@ const manifest = {
 };
 
 await writeFile(resolve(root, "desktop/manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+await writeFile(resolve(root, "desktop/package.json"), JSON.stringify({
+  name: "pi-antigravity-desktop",
+  version: manifest.version,
+  private: true,
+  type: "commonjs",
+}, null, 2) + "\n");
 await copyFile(resolve(root, "LICENSE"), resolve(root, "desktop/LICENSE"));
 await copyFile(resolve(root, "node_modules/undici/LICENSE"), resolve(root, "desktop/UNDICI-LICENSE"));
 await writeFile(
@@ -145,4 +151,4 @@ await writeFile(
   "Based on Rahularya01/pi-antigravity 0.10.0 (MIT), commit d59d22bfebd9e44f2fd4a31bf5954a23fb9b043a.\nIncludes undici 8.11.2 (MIT) bundled for provider OAuth.\nHost-provided Pi modules are not bundled.\n",
 );
 
-console.log("Built Desktop 0.2.5: runtime-only OAuth client configuration + native transport + bilingual model panel.");
+console.log("Built Desktop 0.2.6: marketplace main.js entry + runtime-only OAuth client configuration.");

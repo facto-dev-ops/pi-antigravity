@@ -1,4 +1,4 @@
-# Antigravity for PI-Desktop · 0.2.5
+# Antigravity for PI-Desktop · 0.2.6
 
 > **0.2.5 安全变更：不再内置任何 OAuth 客户端 ID 或密钥。** 登录和刷新必须配置你有权使用的客户端。客户端必须具备 Google 所需 scope 的授权；自行创建客户端不保证获得 Cloud Code Assist 权限。旧账号令牌属于原客户端，不能保证换客户端后可刷新，必要时重新登录。
 >
@@ -8,13 +8,13 @@
 
 > 非 Google 官方集成，仅使用你有权访问的账户。需要权限 `provider.register`、`provider.oauth`、`agent.extension`、`net.fetch`、`ui.panel`，安装时须明确授权。OAuth 插件回调能够接收令牌，受信任扩展运行于 Agent 进程，不是 OS 沙箱。先检查源码再授权。
 >
-> 本机验证版本：PI-Desktop **0.18.0**。0.2.5 通过 Desktop 原生插件面板（`ui.panel`）提供模型勾选、拖拽排序、高级设置（思考等级／上下文／输出长度）及自定义模型 ID。使用扩展页的「打开面板」入口；CLI 适配器中的 `/antigravity.settings` 只提供入口提示，并非本安装包的打开命令。
+> 本机验证版本：PI-Desktop **0.18.0**。0.2.6 通过 Desktop 原生插件面板（`ui.panel`）提供模型勾选、拖拽排序、高级设置（思考等级／上下文／输出长度）及自定义模型 ID。使用扩展页的「打开面板」入口；CLI 适配器中的 `/antigravity.settings` 只提供入口提示，并非本安装包的打开命令。
 >
 > **Model settings:** The plugin supplies its own model-management panel, not the host's built-in account editor. Use **Plugins → Antigravity → Open panel**. OAuth and model availability still require your authorized Google account.
 ## 安装和使用
 
 0. 在启动 PI-Desktop **之前**，将 `ANTIGRAVITY_CLIENT_ID`、`ANTIGRAVITY_CLIENT_SECRET` 设置到运行插件的进程环境中（兼容 `NOAGY_CLIENT_ID`、`NOAGY_CLIENT_SECRET`）。完全退出已有 Desktop 进程，再从带配置的环境启动。仅在另一个终端设置变量，不代表已运行的 Electron 或插件进程能够读取；快捷方式启动也不能假设继承该终端环境。不要在模型设置面板、聊天、仓库、manifest 或安装包中填写凭据。缺配置时明确报错，且不打开回调端口、不发起网络请求。
-1. 在 **插件 → 菜单 → 安装插件包** 中选择 `dist/local.pi-antigravity.desktop-0.2.5.piplug`。
+1. 在 **插件 → 菜单 → 安装插件包** 中选择 `dist/local.pi-antigravity.desktop-0.2.6.piplug`。
 2. 确认五项权限：添加模型服务、运行供应商 OAuth、在 Agent 内运行代码、受 Google 域名白名单约束的网络请求、模型设置面板。启用插件；不要将插件仅限定到不包含目标会话的项目。
 3. 打开 **设置 → 模型 → 添加 AI 服务**，搜索 **Antigravity**，点击“使用 Google 登录 Antigravity”。登录操作不需要提前创建或运行聊天会话。
 4. 在系统浏览器中由你本人完成 Google 授权。宿主负责展示登录状态、打开授权地址和保存凭据。
@@ -92,7 +92,7 @@
 
 ### 发布 / Publishing
 
-源码：[new-Beginner/pi-antigravity](https://github.com/new-Beginner/pi-antigravity)，Desktop 干净发布分支为 `desktop-release`，版本标签为 `desktop-v0.2.5`。该分支从清理后的快照开始，避免推送含旧默认凭据的祖先；旧本地历史保留，不绕过 GitHub 密钥保护。安装包名为 `local.pi-antigravity.desktop-0.2.5.piplug`。上游 CLI 的 `package.json` 版本独立保留为 0.10.0，不发布到上游 npm 包。
+源码：[new-Beginner/pi-antigravity](https://github.com/new-Beginner/pi-antigravity)，Desktop 干净发布分支为 `desktop-release`，版本标签为 `desktop-v0.2.6`。该分支从清理后的快照开始，避免推送含旧默认凭据的祖先；旧本地历史保留，不绕过 GitHub 密钥保护。安装包名为 `local.pi-antigravity.desktop-0.2.6.piplug`。上游 CLI 的 `package.json` 版本独立保留为 0.10.0，不发布到上游 npm 包。
 
 官方当前通过 [插件中心](https://plugins.aiuo.net) 接收源码仓库绑定和版本审核；官方发行仓库由中心生成，不手工修改 `catalog.json` 或提交插件源码 PR。GitHub Release 不代表插件已经被官方市场收录。后续版本必须同步更新构建清单版本、文档、标签和安装包名。
 
@@ -126,7 +126,7 @@ npm run desktop:build
 PI_DESKTOP_RUNTIME_DIR='D:/Mypi_deskktop/PI-Desktop/resources/agent-runtime' npm run desktop:smoke
 npm run secrets:check
 # 打包后再检查实际安装包；提交后检查将要推送的全部可达历史
-npm run secrets:check -- --package desktop/dist/local.pi-antigravity.desktop-0.2.5.piplug
+npm run secrets:check -- --package desktop/dist/local.pi-antigravity.desktop-0.2.6.piplug
 npm run secrets:check -- --history desktop-release
 ```
 
@@ -146,3 +146,4 @@ npm run secrets:check -- --history desktop-release
 - 构建后 OAuth 回归及真实运行器模拟回归通过。官方 PluginCheck 无错误，提示四项权限需要明确授权。未自动安装、读取真实令牌或改写宿主配置；真实账号回复仍需安装后验收。
 
 - 0.2.5：移除上游 OAuth 默认客户端；新增运行时缺配置、请求参数、错误回显脱敏及独立发布凭据扫描。扫描规则覆盖常见凭据及常量 Base64 编码，不替代全面安全审计。OAuth 和运行器测试仍使用假凭据和模拟响应，不代表真实 Google 账号在线验收。
+- 0.2.6：插件中心要求主入口必须为 `main.js`；改用该文件名并添加包级 CommonJS 声明，包元数据版本随 manifest 更新。不改动 OAuth 配置和凭据边界。 / Marketplace-compatible `main.js` with explicit CommonJS package metadata; no bundled OAuth client credentials.
