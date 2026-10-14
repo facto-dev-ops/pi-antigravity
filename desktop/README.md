@@ -61,7 +61,7 @@
 | 功能 | 行为 |
 | --- | --- |
 | 全局服务 | manifest 声明 `Antigravity` OAuth 服务，非会话 Agent |
-| 模型目录 | 8 个上游静态对话模型，实际可用性由账户决定 |
+| 模型目录 | 9 个上游静态对话模型，实际可用性由账户决定；`gemini-4-argon` 为 2026-10-13 GA 的旗舰推理模型，Google 标注不在免费层与 AI Pro 层，账户目录未下发时选择它会由后端拒绝 |
 | 认证 | 宿主加密保存令牌；OAuth 网络通过 `pi.net.fetch` 使用宿主代理 |
 | 传输 | Gemini native → Cloud Code Assist 请求包装，SSE 增量解包 |
 | 思考与工具 | 上游模型路由、思考配置和 Claude/GPT-OSS 工具 schema 适配 |

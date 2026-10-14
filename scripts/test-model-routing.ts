@@ -88,6 +88,13 @@ const routeCases: Array<[string, string | undefined, string]> = [
   ["gemini-3.5-flash", "medium", "gemini-3.5-flash-low"],
   ["gemini-3.5-flash", "high", "gemini-3-flash-agent"],
   ["gemini-3.5-flash", "xhigh", "gemini-3-flash-agent"],
+  ["gemini-4-argon", undefined, "gemini-4-argon"],
+  ["gemini-4-argon", "off", "gemini-4-argon"],
+  ["gemini-4-argon", "minimal", "gemini-4-argon"],
+  ["gemini-4-argon", "low", "gemini-4-argon"],
+  ["gemini-4-argon", "medium", "gemini-4-argon"],
+  ["gemini-4-argon", "high", "gemini-4-argon"],
+  ["gemini-4-argon", "xhigh", "gemini-4-argon"],
   ["gemini-3.1-pro", "medium", "gemini-3.1-pro-low"],
   ["gemini-3.1-pro", "high", "gemini-pro-agent"],
   ["gemini-3.1-pro", "xhigh", "gemini-pro-agent"],
@@ -103,6 +110,7 @@ for (const [model, effort, expected] of routeCases) {
 
 const modelIds = new Set(ANTIGRAVITY_MODELS.map((model) => model.id));
 const expectedModels = [
+  "gemini-4-argon",
   "gemini-3.8-flash",
   "gemini-3.7-flash",
   "gemini-3.6-flash",
@@ -122,6 +130,7 @@ for (const expected of expectedModels) {
 }
 
 const expectedThinkingLevels: Record<string, string[]> = {
+  "gemini-4-argon": ["low", "medium", "high"],
   "gemini-3.8-flash": ["low", "medium", "high"],
   "gemini-3.7-flash": ["low", "medium", "high"],
   "gemini-3.6-flash": ["low", "medium", "high"],

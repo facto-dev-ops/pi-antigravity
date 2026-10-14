@@ -143,7 +143,7 @@ try {
   });
   await check("model and Desktop commands register without CLI OAuth APIs", async () => {
     const harness = commandHarness(new DesktopAuthStore(join(root, "commands")));
-    assert.equal(harness.agent!.id, "antigravity"); assert.equal(harness.agent!.models.length, 8);
+    assert.equal(harness.agent!.id, "antigravity"); assert.equal(harness.agent!.models.length, 9);
     assert.deepEqual([...harness.commands.keys()].sort(), ["antigravity.login", "antigravity.logout", "antigravity.model", "antigravity.models", "antigravity.settings", "antigravity.status", "antigravity.usage"].sort());
   });
   await check("native login callback saves credentials without exposing tokens", async () => {

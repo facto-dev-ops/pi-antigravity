@@ -14,6 +14,7 @@ export const PROVIDER_NAME = "Antigravity";
  * - Gemini 3.7 Flash (Low / Medium / High)
  * - Gemini 3.6 Flash (Low / Medium / High)
  * - Gemini 3.5 Flash (Low / Medium / High)
+ * - Gemini 4 Argon (Low / Medium / High, pending account entitlement)
  * - Gemini 3.1 Pro (Low / High)
  * - Claude Sonnet 4.6 (Thinking)
  * - Claude Opus 4.6 (Thinking)
@@ -43,6 +44,22 @@ export const ANTIGRAVITY_ROUTING: Record<string, AntigravityRouting> = {
       xhigh: "claude-sonnet-4-6",
     },
     defaultRequestId: "claude-sonnet-4-6",
+  },
+  // Gemini 4 Argon went GA on 2026-10-13 (ai.google.dev/gemini-api/docs/models). The
+  // Gemini API endpoint id is `gemini-4-argon`; the Cloud Code Assist backend has not yet
+  // advertised tiered `-low/-medium/-high` runtime ids for it, so every thinking level
+  // routes to the bare id (same shape as `claude-sonnet-4-6` and `gpt-oss-120b`). Once
+  // `fetchAvailableModels` starts returning variants, add them here or rely on discovery.
+  "gemini-4-argon": {
+    off: "gemini-4-argon",
+    routing: {
+      minimal: "gemini-4-argon",
+      low: "gemini-4-argon",
+      medium: "gemini-4-argon",
+      high: "gemini-4-argon",
+      xhigh: "gemini-4-argon",
+    },
+    defaultRequestId: "gemini-4-argon",
   },
   "gemini-3.1-pro": {
     // `gemini-3.1-pro-high` is advertised but currently 400s for agent streamGenerateContent;
@@ -119,6 +136,9 @@ export const ANTIGRAVITY_ROUTING: Record<string, AntigravityRouting> = {
  * Requesting more than these limits returns a 400 Bad Request from the API.
  */
 export const RUNTIME_MAX_OUTPUT_TOKENS: Record<string, number> = {
+  // Documented Gemini API cap (models.dev: 32768). Not yet verified against
+  // cloudcode-pa because the model is absent from free/consumer catalogs.
+  "gemini-4-argon": 32768,
   "gemini-3.8-flash": 65536,
   "gemini-3.8-flash-low": 65536,
   "gemini-3.8-flash-medium": 65536,
@@ -167,6 +187,9 @@ export function getMaxOutputTokens(modelId: string, runtimeModel?: string): numb
 
 const geminiFlashCost = { input: 0.1, output: 0.4, cacheRead: 0.025, cacheWrite: 0.1 };
 const geminiProCost = { input: 1.25, output: 5.0, cacheRead: 0.3125, cacheWrite: 1.25 };
+// Published Gemini API pricing: $2/$10 per 1M tokens through 2026-11-30, $4/$20 after.
+// cacheWrite follows the existing Gemini convention of matching the input price.
+const geminiArgonCost = { input: 2.0, output: 10.0, cacheRead: 0.1, cacheWrite: 2.0 };
 const claudeSonnetCost = { input: 3.0, output: 15.0, cacheRead: 0.3, cacheWrite: 3.75 };
 const claudeOpusCost = { input: 15.0, output: 75.0, cacheRead: 1.5, cacheWrite: 18.75 };
 const gptOssCost = { input: 0.6, output: 2.4, cacheRead: 0.15, cacheWrite: 0.6 };
@@ -243,6 +266,16 @@ export const ANTIGRAVITY_MODELS: ProviderModelConfig[] = [
     cost: geminiFlashCost,
     contextWindow: 1048576,
     maxTokens: 65536,
+  },
+  {
+    id: "gemini-4-argon",
+    name: "Gemini 4 Argon (Antigravity)",
+    reasoning: true,
+    thinkingLevelMap: thinkingLevelMaps.lowMediumHigh,
+    input: ["text", "image"],
+    cost: geminiArgonCost,
+    contextWindow: 1048576,
+    maxTokens: 32768,
   },
   {
     id: "claude-opus-4-6",
